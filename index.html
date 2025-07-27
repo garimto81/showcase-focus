@@ -82,7 +82,7 @@
         <!-- Section 1: Overview -->
         <section id="overview" class="py-20 bg-white">
             <div class="container mx-auto px-6 text-center">
-                <h1 class="text-5xl font-bold text-primary mb-4">데이터로 증명하는 촬영의 프로페셔널리즘</h1>
+                <h1 class="text-5xl font-bold text-primary mb-4">발표 자료 : 포커스 이슈 탐지기</h1>
                 <p class="text-xl text-gray-600 max-w-3xl mx-auto">
                     '포커스 이슈 탐지기'는 AI 기술을 통해 영상 속 포커스 문제를 정량적으로 분석하고, 주관적 평가를 넘어선 객관적 데이터 기반의 품질 관리 및 역량 강화 솔루션을 제공합니다.
                 </p>
@@ -93,35 +93,44 @@
         <section id="how-it-works" class="py-20">
             <div class="container mx-auto px-6">
                 <h2 class="section-title text-primary">핵심 작동 원리</h2>
-                <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8 text-center">
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-x-8 gap-y-12 text-center">
                     <!-- Step 1 -->
                     <div class="flex flex-col items-center">
-                        <div class="w-full h-auto mx-auto mb-4">
-                            <img src="https://github.com/garimto81/realtime/blob/main/2506271214.png?raw=true" alt="얼굴 영역 탐지" class="w-full h-auto object-contain rounded-lg shadow-md">
+                        <div class="w-full h-48 flex items-center justify-center mb-4">
+                            <img src="https://github.com/garimto81/realtime/blob/main/2506271214.png?raw=true" alt="얼굴 영역 탐지" class="max-w-full max-h-full object-contain rounded-lg shadow-md">
                         </div>
                         <h3 class="text-xl font-bold mb-2">1. 얼굴 영역 탐지</h3>
                         <p class="text-gray-600"><strong>face-api.js</strong> 라이브러리를 사용해 프레임 내 모든 얼굴을 식별합니다. 여러 얼굴이 감지될 경우, 화면 중앙에 가장 가깝고 가장 큰 얼굴을 주요 피사체로 자동 선정하여 분석합니다.</p>
                     </div>
                     <!-- Step 2 -->
                     <div class="flex flex-col items-center">
-                        <div class="w-full h-auto mx-auto mb-4">
-                            <img src="https://placehold.co/200x200/e0e1dd/415a77?text=선명도" alt="선명도 계산" class="w-full h-auto object-contain rounded-lg shadow-md">
+                        <div class="w-full h-48 flex items-center justify-center mb-4">
+                            <img src="https://github.com/garimto81/showcase-focus/blob/main/%ED%99%94%EB%A9%B4%20%EC%BA%A1%EC%B2%98%202025-07-27%20213936.png?raw=true" alt="선명도 계산" class="max-w-full max-h-full object-contain rounded-lg shadow-md">
                         </div>
                         <h3 class="text-xl font-bold mb-2">2. 선명도 계산</h3>
                         <p class="text-gray-600">탐지된 얼굴 영역에 <strong>라플라시안 변환</strong> 알고리즘을 적용합니다. 선명한 이미지일수록 경계선이 뚜렷해 높은 '선명도 점수'를, 흐릿할수록 낮은 점수를 받게 됩니다.</p>
                     </div>
                     <!-- Step 3 -->
                     <div class="flex flex-col items-center">
-                        <div class="w-full h-auto mx-auto mb-4">
-                            <img src="https://placehold.co/200x200/e0e1dd/415a77?text=이슈+판별" alt="이슈 판별" class="w-full h-auto object-contain rounded-lg shadow-md">
+                        <div class="w-full h-48 flex flex-col items-center justify-center mb-4">
+                            <div class="flex items-center justify-center gap-2 w-full">
+                                <img src="https://github.com/garimto81/realtime/blob/main/%EC%8A%A4%ED%81%AC%EB%A6%B0%EC%83%B7%202025-07-18%20185523.png?raw=true" alt="선명한 이전 프레임" class="max-w-[45%] max-h-40 object-contain rounded-lg shadow-md">
+                                <span class="text-4xl font-bold text-secondary shrink-0">→</span>
+                                <img src="https://github.com/garimto81/realtime/blob/main/%EC%8A%A4%ED%81%AC%EB%A6%B0%EC%83%B7%202025-07-18%20185529.png?raw=true" alt="흐릿한 문제 프레임" class="max-w-[45%] max-h-40 object-contain rounded-lg shadow-md">
+                            </div>
+                            <div class="flex items-center justify-center gap-2 w-full mt-2">
+                                <p class="w-[45%] text-center text-lg font-bold text-green-600">Score: 80</p>
+                                <div class="w-[10%]"></div>
+                                <p class="w-[45%] text-center text-lg font-bold text-red-500">Score: 35</p>
+                            </div>
                         </div>
                         <h3 class="text-xl font-bold mb-2">3. 이슈 판별</h3>
                         <p class="text-gray-600">단순히 점수가 낮은 것이 아닌, 직전 프레임 대비 점수가 <strong>사용자 설정 기준(Threshold)</strong> 이상으로 급격히 하락하는 순간을 '포커스 이슈'로 최종 판별합니다.</p>
                     </div>
                     <!-- Step 4 -->
                     <div class="flex flex-col items-center">
-                       <div class="w-full h-auto mx-auto mb-4">
-                           <img src="https://placehold.co/200x200/e0e1dd/415a77?text=시각화" alt="데이터 시각화" class="w-full h-auto object-contain rounded-lg shadow-md">
+                       <div class="w-full h-48 flex items-center justify-center mb-4">
+                           <img src="https://github.com/garimto81/showcase-focus/blob/main/%ED%99%94%EB%A9%B4%20%EC%BA%A1%EC%B2%98%202025-07-28%20010753.png?raw=true" alt="데이터 시각화" class="max-w-full max-h-full object-contain rounded-lg shadow-md">
                         </div>
                         <h3 class="text-xl font-bold mb-2">4. 데이터 시각화</h3>
                         <p class="text-gray-600">이슈 발생 시점의 <strong>'직전 선명한 프레임'</strong>과 <strong>'문제 프레임'</strong>을 캡처합니다. 전체 점수 변화는 그래프로, 문제 지점은 비교 이미지로 시각화하여 제공합니다.</p>
@@ -172,32 +181,13 @@
             <div class="container mx-auto px-6">
                 <h2 class="section-title text-primary">인터랙티브 데모</h2>
                 <p class="text-center text-gray-600 max-w-3xl mx-auto mb-10">
-                    아래는 가상 분석 데이터로 생성된 선명도 그래프입니다. 그래프 위의 <span class="text-red-500 font-bold">붉은 점(●)</span>을 클릭하여 해당 시점의 포커스 이슈를 직접 확인해보세요.
+                    아래는 가상 분석 데이터로 생성된 선명도 그래프입니다. 그래프 위의 <span class="text-red-500 font-bold">붉은 점(●)</span>은 '포커스 이슈'가 발생한 지점을 나타냅니다.
                 </p>
                 
                 <!-- Chart -->
                 <div class="bg-white p-4 sm:p-8 rounded-2xl shadow-xl">
                     <div class="chart-container">
                         <canvas id="focus-chart"></canvas>
-                    </div>
-                    
-                    <!-- Key Frame Comparison -->
-                    <div id="key-frame-viewer" class="mt-8 pt-8 border-t-2 border-gray-100 max-w-[800px] mx-auto">
-                        <h3 class="text-2xl font-bold text-center text-secondary mb-6">주요 프레임 비교 (<span id="frame-time">0.00</span>초)</h3>
-                        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-                            <!-- Before Frame -->
-                            <div class="text-center">
-                                <h4 class="text-lg font-semibold mb-2 text-green-600">✓ 이전 선명한 프레임</h4>
-                                <img id="sharp-frame" src="https://placehold.co/800x533/e0e1dd/415a77?text=Select+a+Point" alt="선명한 프레임" class="w-full h-auto rounded-lg shadow-md border-4 border-green-200" onerror="this.onerror=null;this.src='https://placehold.co/800x533/e0e1dd/415a77?text=Image+Not+Found';">
-                                <p class="mt-2 font-mono text-sm">Score: <span id="sharp-score" class="font-bold">N/A</span></p>
-                            </div>
-                            <!-- After Frame -->
-                            <div class="text-center">
-                                <h4 class="text-lg font-semibold mb-2 text-red-500">🚨 포커스 이슈 프레임</h4>
-                                <img id="blurry-frame" src="https://placehold.co/800x533/e0e1dd/415a77?text=Select+a+Point" alt="흐릿한 프레임" class="w-full h-auto rounded-lg shadow-md border-4 border-red-200" onerror="this.onerror=null;this.src='https://placehold.co/800x533/e0e1dd/415a77?text=Image+Not+Found';">
-                                <p class="mt-2 font-mono text-sm">Score: <span id="blurry-score" class="font-bold">N/A</span></p>
-                            </div>
-                        </div>
                     </div>
                 </div>
             </div>
@@ -258,47 +248,19 @@
             });
 
             // --- Interactive Demo Logic ---
-            const frameTimeEl = document.getElementById('frame-time');
-            const sharpFrameEl = document.getElementById('sharp-frame');
-            const blurryFrameEl = document.getElementById('blurry-frame');
-            const sharpScoreEl = document.getElementById('sharp-score');
-            const blurryScoreEl = document.getElementById('blurry-score');
-            
-            // --- 이미지 교체 지점 ---
-            // 아래 issueData 객체 안의 sharpImg와 blurryImg의 URL을
-            // 원하시는 이미지 주소로 교체하시면 데모에 바로 적용됩니다.
             const issueData = {
-                15.5: { 
+                "15.5": { 
                     sharp: 185, 
                     blurry: 45, 
-                    sharpImg: "https://images.pexels.com/photos/532220/pexels-photo-532220.jpeg?auto=compress&cs=tinysrgb&w=800",
-                    blurryImg: "https://images.pexels.com/photos/1102341/pexels-photo-1102341.jpeg?auto=compress&cs=tinysrgb&w=800"
                 },
-                32.0: { 
+                "32.0": { 
                     sharp: 160, 
                     blurry: 33, 
-                    sharpImg: "https://images.pexels.com/photos/842980/pexels-photo-842980.jpeg?auto=compress&cs=tinysrgb&w=800",
-                    blurryImg: "https://images.pexels.com/photos/1264210/pexels-photo-1264210.jpeg?auto=compress&cs=tinysrgb&w=800"
                 },
-                58.5: { 
+                "58.5": { 
                     sharp: 210, 
                     blurry: 55, 
-                    sharpImg: "https://images.pexels.com/photos/762020/pexels-photo-762020.jpeg?auto=compress&cs=tinysrgb&w=800",
-                    blurryImg: "https://images.pexels.com/photos/3772510/pexels-photo-3772510.jpeg?auto=compress&cs=tinysrgb&w=800"
                 },
-            };
-
-            const updateKeyFrames = (time) => {
-                const data = issueData[time];
-                if (!data) return;
-
-                frameTimeEl.textContent = time.toFixed(2);
-                sharpScoreEl.textContent = data.sharp;
-                blurryScoreEl.textContent = data.blurry;
-                
-                // 데이터 객체에서 실제 이미지 URL을 가져와 설정합니다.
-                sharpFrameEl.src = data.sharpImg;
-                blurryFrameEl.src = data.blurryImg;
             };
             
             // --- Chart.js Demo ---
@@ -365,16 +327,6 @@
                                     }
                                     return `점수: ${context.parsed.y}`;
                                 }
-                            }
-                        }
-                    },
-                    onClick: (e, elements) => {
-                        if (elements.length > 0) {
-                            const element = elements[0];
-                            // Check if the clicked element is from the '포커스 이슈' dataset
-                            if (element.datasetIndex === 1) {
-                                const time = chart.data.datasets[1].data[element.index].x;
-                                updateKeyFrames(time);
                             }
                         }
                     },
