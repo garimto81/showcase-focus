@@ -1,0 +1,401 @@
+<!-- Chosen Palette: Tech Neutral -->
+<!-- Application Structure Plan: 이 SPA는 기획서의 내용을 사용자 친화적으로 재구성한 수직 스롤링 웹페이지입니다. 사용자는 (1)프로젝트의 목적을 소개하는 헤더, (2)핵심 작동 원리를 시각적으로 설명하는 다이어그램, (3)주요 기능을 탭으로 탐색하는 섹션, (4)차트와 이미지 뷰어를 직접 조작해보는 인터랙티브 데모, (5)결과물의 활용 방안을 보여주는 카드로 이어지는 흐름을 따라가며 프로젝트를 깊이 있게 이해할 수 있습니다. 이 구조는 딱딱한 기획서를 동적인 경험으로 전환하여 정보 전달력을 극대화하기 위해 선택되었습니다. -->
+<!-- Visualization & Content Choices: 
+- 핵심 작동 원리: (목표: 정리) 4단계 로직을 이미지와 텍스트가 포함된 HTML/CSS Flexbox 카드로 표현하여 복잡한 과정을 시각적으로 단순화했습니다. 각 단계에 대한 설명을 구체화하여 기술적 깊이를 더했습니다.
+- 주요 기능: (목표: 정리/정보) 기능들을 탭 인터페이스로 그룹화하여 사용자가 원하는 정보에 선택적으로 집중할 수 있도록 했습니다. JS로 탭 클릭 시 해당 내용만 표시합니다.
+- 인터랙티브 데모: (목표: 변화/비교) Chart.js(Canvas)를 사용하여 시간 경과에 따른 선명도 점수 변화를 라인 그래프로 시각화했습니다. 그래프의 특정 지점을 클릭하면 JS가 이벤트를 감지하여 하단의 '주요 프레임 비교' 영역의 이미지와 텍스트를 동적으로 업데이트합니다. 이는 사용자가 도구의 핵심 분석 기능을 직접 체험하게 하여 이해도를 높입니다.
+- 활용 방안: (목표: 정보) 세 가지 활용 방안을 아이콘(Unicode)과 텍스트를 사용한 카드 레이아웃으로 제시하여 가독성을 높였습니다.
+- 모든 시각적 요소는 HTML/CSS 또는 Canvas로 구현되었습니다. -->
+<!-- CONFIRMATION: NO SVG graphics used. NO Mermaid JS used. -->
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>인터랙티브 기획서: 포커스 이슈 탐지기</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@400;500;700&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Noto Sans KR', sans-serif;
+            background-color: #f8f9fa;
+            color: #212529;
+        }
+        .bg-primary { background-color: #0d1b2a; }
+        .text-primary { color: #0d1b2a; }
+        .bg-secondary { background-color: #415a77; }
+        .text-secondary { color: #415a77; }
+        .bg-accent { background-color: #e0e1dd; }
+        .text-accent { color: #e0e1dd; }
+        .border-accent { border-color: #e0e1dd; }
+        .section-title {
+            font-size: 2.25rem;
+            font-weight: 700;
+            margin-bottom: 2rem;
+            text-align: center;
+        }
+        .nav-link {
+            transition: color 0.3s ease;
+        }
+        .nav-link:hover {
+            color: #778da9;
+        }
+        .feature-tab {
+            transition: all 0.3s ease;
+            border-bottom: 4px solid transparent;
+        }
+        .feature-tab.active {
+            border-color: #415a77;
+            color: #0d1b2a;
+        }
+        .chart-container {
+            position: relative;
+            width: 100%;
+            max-width: 800px;
+            margin-left: auto;
+            margin-right: auto;
+            height: 40vh;
+            max-height: 400px;
+        }
+    </style>
+</head>
+<body class="antialiased">
+
+    <!-- Header & Navigation -->
+    <header class="bg-primary text-white sticky top-0 z-50 shadow-lg">
+        <nav class="container mx-auto px-6 py-4 flex justify-between items-center">
+            <a href="https://garimto81.github.io/fram_v2/" target="_blank" rel="noopener noreferrer" class="bg-secondary text-white px-4 py-2 rounded-lg text-lg font-bold hover:bg-opacity-90 transition-all duration-300">
+                포커스 이슈 탐지기 바로가기
+            </a>
+            <ul class="hidden md:flex space-x-6 items-center text-lg">
+                <li><a href="#overview" class="nav-link">개요</a></li>
+                <li><a href="#how-it-works" class="nav-link">작동 원리</a></li>
+                <li><a href="#features" class="nav-link">주요 기능</a></li>
+                <li><a href="#demo" class="nav-link">인터랙티브 데모</a></li>
+                <li><a href="#impact" class="nav-link">활용 방안</a></li>
+            </ul>
+        </nav>
+    </header>
+
+    <main>
+        <!-- Section 1: Overview -->
+        <section id="overview" class="py-20 bg-white">
+            <div class="container mx-auto px-6 text-center">
+                <h1 class="text-5xl font-bold text-primary mb-4">데이터로 증명하는 촬영의 프로페셔널리즘</h1>
+                <p class="text-xl text-gray-600 max-w-3xl mx-auto">
+                    '포커스 이슈 탐지기'는 AI 기술을 통해 영상 속 포커스 문제를 정량적으로 분석하고, 주관적 평가를 넘어선 객관적 데이터 기반의 품질 관리 및 역량 강화 솔루션을 제공합니다.
+                </p>
+            </div>
+        </section>
+
+        <!-- Section 2: How It Works -->
+        <section id="how-it-works" class="py-20">
+            <div class="container mx-auto px-6">
+                <h2 class="section-title text-primary">핵심 작동 원리</h2>
+                <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8 text-center">
+                    <!-- Step 1 -->
+                    <div class="flex flex-col items-center">
+                        <div class="w-full h-auto mx-auto mb-4">
+                            <img src="https://github.com/garimto81/realtime/blob/main/2506271214.png?raw=true" alt="얼굴 영역 탐지" class="w-full h-auto object-contain rounded-lg shadow-md">
+                        </div>
+                        <h3 class="text-xl font-bold mb-2">1. 얼굴 영역 탐지</h3>
+                        <p class="text-gray-600"><strong>face-api.js</strong> 라이브러리를 사용해 프레임 내 모든 얼굴을 식별합니다. 여러 얼굴이 감지될 경우, 화면 중앙에 가장 가깝고 가장 큰 얼굴을 주요 피사체로 자동 선정하여 분석합니다.</p>
+                    </div>
+                    <!-- Step 2 -->
+                    <div class="flex flex-col items-center">
+                        <div class="w-full h-auto mx-auto mb-4">
+                            <img src="https://placehold.co/200x200/e0e1dd/415a77?text=선명도" alt="선명도 계산" class="w-full h-auto object-contain rounded-lg shadow-md">
+                        </div>
+                        <h3 class="text-xl font-bold mb-2">2. 선명도 계산</h3>
+                        <p class="text-gray-600">탐지된 얼굴 영역에 <strong>라플라시안 변환</strong> 알고리즘을 적용합니다. 선명한 이미지일수록 경계선이 뚜렷해 높은 '선명도 점수'를, 흐릿할수록 낮은 점수를 받게 됩니다.</p>
+                    </div>
+                    <!-- Step 3 -->
+                    <div class="flex flex-col items-center">
+                        <div class="w-full h-auto mx-auto mb-4">
+                            <img src="https://placehold.co/200x200/e0e1dd/415a77?text=이슈+판별" alt="이슈 판별" class="w-full h-auto object-contain rounded-lg shadow-md">
+                        </div>
+                        <h3 class="text-xl font-bold mb-2">3. 이슈 판별</h3>
+                        <p class="text-gray-600">단순히 점수가 낮은 것이 아닌, 직전 프레임 대비 점수가 <strong>사용자 설정 기준(Threshold)</strong> 이상으로 급격히 하락하는 순간을 '포커스 이슈'로 최종 판별합니다.</p>
+                    </div>
+                    <!-- Step 4 -->
+                    <div class="flex flex-col items-center">
+                       <div class="w-full h-auto mx-auto mb-4">
+                           <img src="https://placehold.co/200x200/e0e1dd/415a77?text=시각화" alt="데이터 시각화" class="w-full h-auto object-contain rounded-lg shadow-md">
+                        </div>
+                        <h3 class="text-xl font-bold mb-2">4. 데이터 시각화</h3>
+                        <p class="text-gray-600">이슈 발생 시점의 <strong>'직전 선명한 프레임'</strong>과 <strong>'문제 프레임'</strong>을 캡처합니다. 전체 점수 변화는 그래프로, 문제 지점은 비교 이미지로 시각화하여 제공합니다.</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Section 3: Features -->
+        <section id="features" class="py-20 bg-white">
+            <div class="container mx-auto px-6">
+                <h2 class="section-title text-primary">주요 기능</h2>
+                <div class="max-w-4xl mx-auto">
+                    <div class="flex justify-center border-b-2 border-gray-200 mb-8">
+                        <button class="feature-tab active px-6 py-3 text-lg font-semibold text-gray-500" data-tab="analysis">분석 및 제어</button>
+                        <button class="feature-tab px-6 py-3 text-lg font-semibold text-gray-500" data-tab="management">기록 관리</button>
+                        <button class="feature-tab px-6 py-3 text-lg font-semibold text-gray-500" data-tab="collaboration">협업 및 수정</button>
+                    </div>
+                    <div id="feature-content" class="text-left">
+                        <!-- Analysis Tab Content -->
+                        <div id="tab-analysis" class="space-y-4">
+                            <h4 class="text-xl font-bold text-secondary">✓ 다중 파일 및 백그라운드 분석</h4>
+                            <p class="text-gray-700 ml-4">여러 영상 파일을 동시에 처리하며, Web Worker 기술로 분석 중에도 UI 멈춤 없이 쾌적한 작업 환경을 제공합니다.</p>
+                            <h4 class="text-xl font-bold text-secondary">✓ 실시간 민감도 조절</h4>
+                            <p class="text-gray-700 ml-4">'흐림 기준값(Threshold)'을 실시간으로 조절하여, 영상 특성에 맞는 최적의 분석 민감도를 설정할 수 있습니다.</p>
+                        </div>
+                        <!-- Management Tab Content -->
+                        <div id="tab-management" class="hidden space-y-4">
+                            <h4 class="text-xl font-bold text-secondary">✓ 체계적인 기록 필터링</h4>
+                            <p class="text-gray-700 ml-4">모든 분석 기록을 데이터베이스에 저장하고, 연도, 이벤트, 촬영자 등 다양한 조건으로 손쉽게 필터링 및 검색할 수 있습니다.</p>
+                            <h4 class="text-xl font-bold text-secondary">✓ 직관적인 데이터 시각화</h4>
+                            <p class="text-gray-700 ml-4">시간대별 선명도 변화 그래프와 문제 발생 전후 프레임 비교를 통해, 누구나 쉽게 분석 결과를 이해하고 인사이트를 얻을 수 있습니다.</p>
+                        </div>
+                        <!-- Collaboration Tab Content -->
+                        <div id="tab-collaboration" class="hidden space-y-4">
+                             <h4 class="text-xl font-bold text-secondary">✓ 데이터 충돌 방지를 위한 잠금 기능</h4>
+                            <p class="text-gray-700 ml-4">여러 사용자가 동시에 시스템에 접근하더라도, 수정 중인 항목은 자동으로 잠금 처리되어 데이터의 무결성을 보장합니다.</p>
+                            <h4 class="text-xl font-bold text-secondary">✓ 수동 보정 및 완료 상태 관리</h4>
+                            <p class="text-gray-700 ml-4">AI의 판단을 사용자가 직접 보정하고, 피드백이 완료된 항목에 '수정 완료' 상태를 표시하여 체계적인 워크플로우 관리를 지원합니다.</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Section 4: Interactive Demo -->
+        <section id="demo" class="py-20">
+            <div class="container mx-auto px-6">
+                <h2 class="section-title text-primary">인터랙티브 데모</h2>
+                <p class="text-center text-gray-600 max-w-3xl mx-auto mb-10">
+                    아래는 가상 분석 데이터로 생성된 선명도 그래프입니다. 그래프 위의 <span class="text-red-500 font-bold">붉은 점(●)</span>을 클릭하여 해당 시점의 포커스 이슈를 직접 확인해보세요.
+                </p>
+                
+                <!-- Chart -->
+                <div class="bg-white p-4 sm:p-8 rounded-2xl shadow-xl">
+                    <div class="chart-container">
+                        <canvas id="focus-chart"></canvas>
+                    </div>
+                    
+                    <!-- Key Frame Comparison -->
+                    <div id="key-frame-viewer" class="mt-8 pt-8 border-t-2 border-gray-100 max-w-[800px] mx-auto">
+                        <h3 class="text-2xl font-bold text-center text-secondary mb-6">주요 프레임 비교 (<span id="frame-time">0.00</span>초)</h3>
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                            <!-- Before Frame -->
+                            <div class="text-center">
+                                <h4 class="text-lg font-semibold mb-2 text-green-600">✓ 이전 선명한 프레임</h4>
+                                <img id="sharp-frame" src="https://placehold.co/800x533/e0e1dd/415a77?text=Select+a+Point" alt="선명한 프레임" class="w-full h-auto rounded-lg shadow-md border-4 border-green-200" onerror="this.onerror=null;this.src='https://placehold.co/800x533/e0e1dd/415a77?text=Image+Not+Found';">
+                                <p class="mt-2 font-mono text-sm">Score: <span id="sharp-score" class="font-bold">N/A</span></p>
+                            </div>
+                            <!-- After Frame -->
+                            <div class="text-center">
+                                <h4 class="text-lg font-semibold mb-2 text-red-500">🚨 포커스 이슈 프레임</h4>
+                                <img id="blurry-frame" src="https://placehold.co/800x533/e0e1dd/415a77?text=Select+a+Point" alt="흐릿한 프레임" class="w-full h-auto rounded-lg shadow-md border-4 border-red-200" onerror="this.onerror=null;this.src='https://placehold.co/800x533/e0e1dd/415a77?text=Image+Not+Found';">
+                                <p class="mt-2 font-mono text-sm">Score: <span id="blurry-score" class="font-bold">N/A</span></p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Section 5: Impact -->
+        <section id="impact" class="py-20 bg-white">
+            <div class="container mx-auto px-6">
+                <h2 class="section-title text-primary">결과물 활용 방안</h2>
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+                    <!-- Impact Card 1 -->
+                    <div class="bg-accent p-8 rounded-lg shadow-lg">
+                        <div class="text-4xl mb-4">👨‍🏫</div>
+                        <h3 class="text-2xl font-bold text-primary mb-3">오퍼레이터 역량 강화</h3>
+                        <p class="text-secondary">객관적 데이터에 기반한 구체적인 피드백을 제공하고, 스스로의 촬영 패턴을 분석하며 개선점을 찾는 셀프 리뷰 도구로 활용됩니다.</p>
+                    </div>
+                    <!-- Impact Card 2 -->
+                    <div class="bg-accent p-8 rounded-lg shadow-lg">
+                        <div class="text-4xl mb-4">📈</div>
+                        <h3 class="text-2xl font-bold text-primary mb-3">팀 품질 및 성과 관리</h3>
+                        <p class="text-secondary">팀 전체에 적용 가능한 표준화된 품질 기준을 수립하고, 이벤트별/개인별 성과를 장기적으로 추적하여 데이터 기반의 팀 관리를 실현합니다.</p>
+                    </div>
+                    <!-- Impact Card 3 -->
+                    <div class="bg-accent p-8 rounded-lg shadow-lg">
+                        <div class="text-4xl mb-4">💡</div>
+                        <h3 class="text-2xl font-bold text-primary mb-3">미래 기술 자산화</h3>
+                        <p class="text-secondary">축적된 '포커스 아웃' 데이터셋은 향후 더 정교한 AI 품질 검수 시스템 개발 및 머신러닝 모델 고도화를 위한 핵심 자산이 됩니다.</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </main>
+    
+    <footer class="bg-primary text-white py-8">
+        <div class="container mx-auto px-6 text-center">
+            <p>&copy; 2025 Focus Issue Detector Project. All rights reserved.</p>
+        </div>
+    </footer>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            // --- Feature Tab Logic ---
+            const tabs = document.querySelectorAll('.feature-tab');
+            const tabContents = {
+                analysis: document.getElementById('tab-analysis'),
+                management: document.getElementById('tab-management'),
+                collaboration: document.getElementById('tab-collaboration'),
+            };
+
+            tabs.forEach(tab => {
+                tab.addEventListener('click', () => {
+                    tabs.forEach(t => t.classList.remove('active'));
+                    tab.classList.add('active');
+                    
+                    Object.values(tabContents).forEach(content => content.classList.add('hidden'));
+                    tabContents[tab.dataset.tab].classList.remove('hidden');
+                });
+            });
+
+            // --- Interactive Demo Logic ---
+            const frameTimeEl = document.getElementById('frame-time');
+            const sharpFrameEl = document.getElementById('sharp-frame');
+            const blurryFrameEl = document.getElementById('blurry-frame');
+            const sharpScoreEl = document.getElementById('sharp-score');
+            const blurryScoreEl = document.getElementById('blurry-score');
+            
+            // --- 이미지 교체 지점 ---
+            // 아래 issueData 객체 안의 sharpImg와 blurryImg의 URL을
+            // 원하시는 이미지 주소로 교체하시면 데모에 바로 적용됩니다.
+            const issueData = {
+                15.5: { 
+                    sharp: 185, 
+                    blurry: 45, 
+                    sharpImg: "https://images.pexels.com/photos/532220/pexels-photo-532220.jpeg?auto=compress&cs=tinysrgb&w=800",
+                    blurryImg: "https://images.pexels.com/photos/1102341/pexels-photo-1102341.jpeg?auto=compress&cs=tinysrgb&w=800"
+                },
+                32.0: { 
+                    sharp: 160, 
+                    blurry: 33, 
+                    sharpImg: "https://images.pexels.com/photos/842980/pexels-photo-842980.jpeg?auto=compress&cs=tinysrgb&w=800",
+                    blurryImg: "https://images.pexels.com/photos/1264210/pexels-photo-1264210.jpeg?auto=compress&cs=tinysrgb&w=800"
+                },
+                58.5: { 
+                    sharp: 210, 
+                    blurry: 55, 
+                    sharpImg: "https://images.pexels.com/photos/762020/pexels-photo-762020.jpeg?auto=compress&cs=tinysrgb&w=800",
+                    blurryImg: "https://images.pexels.com/photos/3772510/pexels-photo-3772510.jpeg?auto=compress&cs=tinysrgb&w=800"
+                },
+            };
+
+            const updateKeyFrames = (time) => {
+                const data = issueData[time];
+                if (!data) return;
+
+                frameTimeEl.textContent = time.toFixed(2);
+                sharpScoreEl.textContent = data.sharp;
+                blurryScoreEl.textContent = data.blurry;
+                
+                // 데이터 객체에서 실제 이미지 URL을 가져와 설정합니다.
+                sharpFrameEl.src = data.sharpImg;
+                blurryFrameEl.src = data.blurryImg;
+            };
+            
+            // --- Chart.js Demo ---
+            const ctx = document.getElementById('focus-chart').getContext('2d');
+            const labels = Array.from({ length: 76 }, (_, i) => (i * 1.0).toFixed(1));
+            const focusScores = [
+                180, 185, 190, 192, 188, 195, 200, 205, 210, 208, 200, 195, 190, 180, 170, 185, // 15.5s Issue
+                45, 50, 65, 80, 95, 110, 125, 140, 155, 160, 158, 162, 165, 163, 159, 160, // 32.0s Issue
+                33, 40, 55, 70, 88, 105, 120, 135, 150, 165, 180, 190, 200, 205, 210, 212, 
+                215, 213, 208, 205, 200, 198, 195, 190, 188, 193, 205, 210, 55, 60, 75, 90, // 58.5s Issue
+                110, 130, 150, 165, 180, 185, 190, 188, 192, 195, 193, 190
+            ];
+            
+            const issuePoints = Object.keys(issueData).map(time => ({
+                x: parseFloat(time),
+                y: issueData[time].blurry
+            }));
+
+            const chart = new Chart(ctx, {
+                type: 'line',
+                data: {
+                    labels: labels,
+                    datasets: [
+                        {
+                            label: '선명도 점수',
+                            data: focusScores,
+                            borderColor: '#415a77',
+                            backgroundColor: 'rgba(65, 90, 119, 0.1)',
+                            fill: true,
+                            tension: 0.4,
+                            pointRadius: 0,
+                            pointHoverRadius: 0,
+                        },
+                        {
+                            label: '포커스 이슈',
+                            data: issuePoints,
+                            backgroundColor: 'rgba(239, 68, 68, 0.8)',
+                            pointRadius: 8,
+                            pointHoverRadius: 12,
+                            type: 'scatter',
+                            showLine: false,
+                        }
+                    ]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    scales: {
+                        y: {
+                            beginAtZero: true,
+                            title: { display: true, text: '선명도 점수 (Focus Score)' }
+                        },
+                        x: {
+                            title: { display: true, text: '시간 (초)' }
+                        }
+                    },
+                    plugins: {
+                        legend: { position: 'top' },
+                        tooltip: {
+                            callbacks: {
+                                label: function(context) {
+                                    if (context.dataset.label === '포커스 이슈') {
+                                        return `이슈 발생! 점수: ${context.parsed.y}`;
+                                    }
+                                    return `점수: ${context.parsed.y}`;
+                                }
+                            }
+                        }
+                    },
+                    onClick: (e, elements) => {
+                        if (elements.length > 0) {
+                            const element = elements[0];
+                            // Check if the clicked element is from the '포커스 이슈' dataset
+                            if (element.datasetIndex === 1) {
+                                const time = chart.data.datasets[1].data[element.index].x;
+                                updateKeyFrames(time);
+                            }
+                        }
+                    },
+                    onHover: (e, elements) => {
+                         e.native.target.style.cursor = elements.length && elements[0].datasetIndex === 1 ? 'pointer' : 'default';
+                    }
+                }
+            });
+            
+            // --- Smooth Scrolling for Nav Links ---
+            document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+                anchor.addEventListener('click', function (e) {
+                    e.preventDefault();
+                    document.querySelector(this.getAttribute('href')).scrollIntoView({
+                        behavior: 'smooth'
+                    });
+                });
+            });
+
+        });
+    </script>
+
+</body>
+</html>
